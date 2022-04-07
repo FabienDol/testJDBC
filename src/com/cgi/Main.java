@@ -7,7 +7,9 @@ public class Main {
 
     public static void main(String[] args) {
 
-        insertDb();
+        //insertDb();
+
+        updateDb();
 
         selectDb();
 
@@ -55,7 +57,6 @@ public class Main {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             java.util.Date d = sdf.parse("07/04/2022");
 
-            // récupère tous les employés dont le salaire est inférieur à 2000 et job = SALESMAN ou MANAGER
             PreparedStatement st = c.prepareStatement("INSERT INTO emp VALUES(?,?,?,?,?,?,?,?)");
             st.setInt(1, 0007);
             st.setString(2, "Saruman");
@@ -66,6 +67,24 @@ public class Main {
             st.setInt(6, 100000);
             st.setInt(7, 8888);
             st.setInt(8, 30);
+
+            st.executeUpdate();
+
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    public static void updateDb() {
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+
+            Connection c = DriverManager.getConnection("jdbc:mysql://localhost:3306/scott", "root", "");
+
+            PreparedStatement st = c.prepareStatement("UPDATE emp SET sal = ? WHERE empno = ?");
+            st.setInt(1, 300000);
+            st.setInt(2, 0007);
 
             st.executeUpdate();
 
