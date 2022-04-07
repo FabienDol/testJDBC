@@ -14,13 +14,16 @@ public class EmployeeDAO implements DAO<Integer, Employee> {
 
         ArrayList<Employee> employees = new ArrayList<>();
 
+        Connection c = null;
+        Statement st = null;
+        ResultSet result = null;
+
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
-            Connection c = DriverManager.getConnection("jdbc:mysql://localhost:3306/scott", "root", "");
-
-            Statement st = c.createStatement();
-            ResultSet result = st.executeQuery("SELECT * FROM emp;");
+            c = DriverManager.getConnection("jdbc:mysql://localhost:3306/scott", "root", "");
+            st = c.createStatement();
+            result = st.executeQuery("SELECT * FROM emp;");
 
             while (result.next()) {
                 employees.add(new Employee(
@@ -37,6 +40,28 @@ public class EmployeeDAO implements DAO<Integer, Employee> {
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
+        } finally {
+            try {
+                if (c != null && !c.isClosed()) {
+                    c.close();
+                }
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+            try {
+                if (st != null && !st.isClosed()) {
+                    st.close();
+                }
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+            try {
+                if (result != null && !result.isClosed()) {
+                    result.close();
+                }
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
         }
 
         return employees;
