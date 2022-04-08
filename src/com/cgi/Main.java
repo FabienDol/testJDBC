@@ -2,6 +2,7 @@ package com.cgi;
 
 import com.cgi.dao.EmployeeDAO;
 import com.cgi.model.Employee;
+import com.cgi.utils.ConnectionManager;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -20,7 +21,7 @@ public class Main {
         //System.out.println("Employee d'id 7 : " + eDAO.findById(7));
 
         // DAO.insert()
-        Employee emp1 = new Employee(1235, "Sam", "Aide au porteur", 1234, new java.util.Date(), 50000, 500, 10);
+        Employee emp1 = new Employee(1235, "Sam", "Aide au porteur", 1234, new java.util.Date(), 2000, 500, 10);
         //eDAO.insert(emp1);
 
         // DAO.update()
@@ -31,6 +32,9 @@ public class Main {
 
         // DAO.delete()
         //eDAO.delete(emp1);
+
+        // on ferme la connexion en fin de pgm
+        ConnectionManager.getInstance().close();
 
     }
 

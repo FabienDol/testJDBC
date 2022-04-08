@@ -1,6 +1,7 @@
 package com.cgi.dao;
 
 import com.cgi.model.Employee;
+import com.cgi.utils.ConnectionManager;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -19,9 +20,7 @@ public class EmployeeDAO implements DAO<Integer, Employee> {
         ResultSet result = null;
 
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-
-            c = DriverManager.getConnection("jdbc:mysql://localhost:3306/scott", "root", "");
+            c = ConnectionManager.getInstance().getConnection();
             st = c.createStatement();
             result = st.executeQuery("SELECT * FROM emp;");
 
@@ -38,30 +37,11 @@ public class EmployeeDAO implements DAO<Integer, Employee> {
                 ));
             }
 
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (SQLException e) {
+            e.printStackTrace();
         } finally {
-            try {
-                if (c != null && !c.isClosed()) {
-                    c.close();
-                }
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
-            try {
-                if (st != null && !st.isClosed()) {
-                    st.close();
-                }
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
-            try {
-                if (result != null && !result.isClosed()) {
-                    result.close();
-                }
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
+            ConnectionManager.getInstance().closeStatement(st);
+            ConnectionManager.getInstance().closeResultSet(result);
         }
 
         return employees;
@@ -72,14 +52,15 @@ public class EmployeeDAO implements DAO<Integer, Employee> {
 
         Employee employee = null;
 
+        Connection c = null;
+        PreparedStatement st = null;
+        ResultSet result = null;
+
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-
-            Connection c = DriverManager.getConnection("jdbc:mysql://localhost:3306/scott", "root", "");
-
-            PreparedStatement st = c.prepareStatement("SELECT * FROM emp WHERE empno = ?;");
+            c = ConnectionManager.getInstance().getConnection();
+            st = c.prepareStatement("SELECT * FROM emp WHERE empno = ?;");
             st.setInt(1, id);
-            ResultSet result = st.executeQuery();
+            result = st.executeQuery();
 
             result.next();
 
@@ -94,8 +75,11 @@ public class EmployeeDAO implements DAO<Integer, Employee> {
                     result.getInt(8)
             );
 
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionManager.getInstance().closeStatement(st);
+            ConnectionManager.getInstance().closeResultSet(result);
         }
 
         return employee;
@@ -104,12 +88,12 @@ public class EmployeeDAO implements DAO<Integer, Employee> {
     @Override
     public void insert(Employee obj) {
 
+        Connection c = null;
+        PreparedStatement st = null;
+
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-
-            Connection c = DriverManager.getConnection("jdbc:mysql://localhost:3306/scott", "root", "");
-
-            PreparedStatement st = c.prepareStatement("INSERT INTO emp VALUES(?,?,?,?,?,?,?,?)");
+            c = ConnectionManager.getInstance().getConnection();
+            st = c.prepareStatement("INSERT INTO emp VALUES(?,?,?,?,?,?,?,?)");
             st.setInt(1, obj.getEmpno());
             st.setString(2, obj.getEname());
             st.setString(3, obj.getJob());
@@ -121,21 +105,22 @@ public class EmployeeDAO implements DAO<Integer, Employee> {
 
             st.executeUpdate();
 
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionManager.getInstance().closeStatement(st);
         }
-
     }
 
     @Override
     public void update(Employee obj) {
 
+        Connection c = null;
+        PreparedStatement st = null;
+
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-
-            Connection c = DriverManager.getConnection("jdbc:mysql://localhost:3306/scott", "root", "");
-
-            PreparedStatement st = c.prepareStatement("UPDATE emp SET " +
+            c = ConnectionManager.getInstance().getConnection();
+            st = c.prepareStatement("UPDATE emp SET " +
                     "ename = ?," +
                     "job = ?," +
                     "mgr = ?," +
@@ -157,8 +142,10 @@ public class EmployeeDAO implements DAO<Integer, Employee> {
 
             st.executeUpdate();
 
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionManager.getInstance().closeStatement(st);
         }
 
     }
@@ -166,30 +153,31 @@ public class EmployeeDAO implements DAO<Integer, Employee> {
     @Override
     public void deleteById(Integer id) {
 
+        Connection c = null;
+        PreparedStatement st = null;
+
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-
-            Connection c = DriverManager.getConnection("jdbc:mysql://localhost:3306/scott", "root", "");
-
-            PreparedStatement st = c.prepareStatement("DELETE FROM emp WHERE empno = ?;");
+            c = ConnectionManager.getInstance().getConnection();
+            st = c.prepareStatement("DELETE FROM emp WHERE empno = ?;");
             st.setInt(1, id);
             st.executeUpdate();
 
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionManager.getInstance().closeStatement(st);
         }
-
     }
 
     @Override
     public void delete(Employee obj) {
 
+        Connection c = null;
+        PreparedStatement st = null;
+
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-
-            Connection c = DriverManager.getConnection("jdbc:mysql://localhost:3306/scott", "root", "");
-
-            PreparedStatement st = c.prepareStatement("DELETE FROM emp WHERE " +
+            c = ConnectionManager.getInstance().getConnection();
+            st = c.prepareStatement("DELETE FROM emp WHERE " +
                     "ename = ? AND " +
                     "job = ? AND " +
                     "mgr = ? AND " +
@@ -211,8 +199,10 @@ public class EmployeeDAO implements DAO<Integer, Employee> {
 
             st.executeUpdate();
 
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            ConnectionManager.getInstance().closeStatement(st);
         }
     }
 
